@@ -1,6 +1,6 @@
 {
   "name": "uhf-scanner-ci-rx600",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Later",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -8,6 +8,7 @@
   "unpkg": "dist/plugin.js",
   "files": [
     "android/src/main/",
+    "android/libs/",
     "android/build.gradle",
     "dist/",
     "ios/Plugin/",
