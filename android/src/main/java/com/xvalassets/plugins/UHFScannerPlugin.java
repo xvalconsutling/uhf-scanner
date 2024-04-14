@@ -15,6 +15,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class UHFScannerPlugin extends Plugin {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
-                    String barcode = msg.getData().getString("data");
-                    String rssi = msg.getData().getString("rssi");
+                    ArrayList<String> barcode = msg.getData().getStringArrayList("tags");
+//                    String rssi = msg.getData().getString("rssi");
                     if (barcode == null || barcode.length() == 0) {
                         return;
                     }
@@ -62,22 +63,26 @@ public class UHFScannerPlugin extends Plugin {
             List<Reader.TAGINFO> list1;
             list1 = mUhfrManager.tagInventoryByTimer((short) 50);
             String data;
+            ArrayList<String> tags= new ArrayList<String>();
             if(list1!= null && list1.size()>0){
                 Log.d("Data received", list1.toString());
                 for (Reader.TAGINFO tfs : list1) {
                     byte[] epcdata = tfs.EpcId;
                     data = Tools.Bytes2HexString(epcdata, epcdata.length);
                     if(data.startsWith(prefix) && data.endsWith(suffix)){
-                        Util.play(1, 0);
-                        int rssi = tfs.RSSI;
-                        Message msg = new Message();
-                        msg.what = 1;
-                        Bundle b = new Bundle();
-                        b.putString("data", data);
-                        b.putString("rssi", rssi + "");
-                        msg.setData(b);
-                        handler.sendMessage(msg);
+//                        int rssi = tfs.RSSI;
+                        tags.add(data);
                     }
+                }
+                if(tags.size() > 0){
+                    Util.play(1, 0);
+                    Message msg = new Message();
+                    msg.what = 1;
+                    Bundle b = new Bundle();
+                    b.putStringArrayList("tags", tags);
+//                        b.putString("rssi", rssi + "");
+                    msg.setData(b);
+                    handler.sendMessage(msg);
                 }
             }
             handler.postDelayed(runnable_MainActivity, 500);
