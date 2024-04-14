@@ -51,7 +51,7 @@ public class UHFScannerPlugin extends Plugin {
                         return;
                     }
                     Log.d("Data received", tags.toString());
-                    notifyListeners("BroadcastReceiverEvent", new JSObject().put("result", barcode), true);
+                    notifyListeners("BroadcastReceiverEvent", new JSObject().put("result", tags), true);
                     break;
             }
         }
