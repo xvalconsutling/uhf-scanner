@@ -17,8 +17,11 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.handheld.uhfr.UHFRManager;
 import com.uhf.api.cls.Reader;
 
@@ -51,7 +54,8 @@ public class UHFScannerPlugin extends Plugin {
                         return;
                     }
                     Log.d("Data received", tags.toString());
-                    notifyListeners("BroadcastReceiverEvent", new JSObject().put("result", tags), true);
+                    Gson gson = new Gson();
+                    notifyListeners("BroadcastReceiverEvent", new JSObject().put("result", gson.toJson(tags)), true);
                     break;
             }
         }
@@ -65,27 +69,42 @@ public class UHFScannerPlugin extends Plugin {
             list1 = mUhfrManager.tagInventoryByTimer((short) 50);
             String data;
             ArrayList<String> tags= new ArrayList<String>();
+            ArrayList<Integer> rssis = new ArrayList<Integer>(); // Array to hold RSSI values
             if(list1!= null && list1.size()>0){
                 for (Reader.TAGINFO tfs : list1) {
                     byte[] epcdata = tfs.EpcId;
                     data = Tools.Bytes2HexString(epcdata, epcdata.length);
                     if(data.startsWith(prefix) && data.endsWith(suffix)){
-//                        int rssi = tfs.RSSI;
-                        tags.add(data);
+                     int rssi = tfs.RSSI;
+                     tags.add(data);
+                     rssis.add(rssi); // Add RSSI value to the rssis array
                     }
                 }
+                Log.d("RSSIS",rssis.toString());
+                Log.d("TAGS",tags.toString());
                 if(tags.size() > 0){
                     Util.play(1, 0);
+                    Collections.sort(tags, new Comparator<String>() {
+                        @Override
+                        public int compare(String tag1, String tag2) {
+                            // Find the corresponding RSSI values for the tags
+                            int index1 = tags.indexOf(tag1);
+                            int index2 = tags.indexOf(tag2);
+                            int rssi1 = rssis.get(index1);
+                            int rssi2 = rssis.get(index2);
+                            // Compare based on RSSI values
+                            return Integer.compare(rssi1, rssi2);
+                        }
+                    });
                     Message msg = new Message();
                     msg.what = 1;
                     Bundle b = new Bundle();
                     b.putStringArrayList("tags", tags);
-//                        b.putString("rssi", rssi + "");
                     msg.setData(b);
                     handler.sendMessage(msg);
                 }
             }
-            handler.postDelayed(runnable_MainActivity, 500);
+            handler.postDelayed(runnable_MainActivity, 1000);
         }
     };
 
