@@ -45,12 +45,13 @@ public class UHFScannerPlugin extends Plugin {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
-                    ArrayList<String> barcode = msg.getData().getStringArrayList("tags");
+                    ArrayList<String> tags = msg.getData().getStringArrayList("tags");
 //                    String rssi = msg.getData().getString("rssi");
-                    if (barcode == null || barcode.length() == 0) {
+                    if (tags == null || tags.size() == 0) {
                         return;
                     }
-                     notifyListeners("BroadcastReceiverEvent", new JSObject().put("result", barcode), true);
+                    Log.d("Data received", tags.toString());
+                    notifyListeners("BroadcastReceiverEvent", new JSObject().put("result", barcode), true);
                     break;
             }
         }
@@ -65,7 +66,6 @@ public class UHFScannerPlugin extends Plugin {
             String data;
             ArrayList<String> tags= new ArrayList<String>();
             if(list1!= null && list1.size()>0){
-                Log.d("Data received", list1.toString());
                 for (Reader.TAGINFO tfs : list1) {
                     byte[] epcdata = tfs.EpcId;
                     data = Tools.Bytes2HexString(epcdata, epcdata.length);

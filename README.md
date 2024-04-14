@@ -29,13 +29,13 @@ npx cap sync
 ### addListener('BroadcastReceiverEvent', ...)
 
 ```typescript
-addListener(eventName: 'BroadcastReceiverEvent', listenerFunc: (barcode: { result: string; }) => void) => PluginListenerHandle
+addListener(eventName: 'BroadcastReceiverEvent', listenerFunc: (barcode: { result: any; }) => void) => PluginListenerHandle
 ```
 
-| Param              | Type                                                   |
-| ------------------ | ------------------------------------------------------ |
-| **`eventName`**    | <code>'BroadcastReceiverEvent'</code>                  |
-| **`listenerFunc`** | <code>(barcode: { result: string; }) =&gt; void</code> |
+| Param              | Type                                                |
+| ------------------ | --------------------------------------------------- |
+| **`eventName`**    | <code>'BroadcastReceiverEvent'</code>               |
+| **`listenerFunc`** | <code>(barcode: { result: any; }) =&gt; void</code> |
 
 **Returns:** <code><a href="#pluginlistenerhandle">PluginListenerHandle</a></code>
 
