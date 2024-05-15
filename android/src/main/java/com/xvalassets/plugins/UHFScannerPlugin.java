@@ -41,6 +41,8 @@ public class UHFScannerPlugin extends Plugin {
     private String prefix = "";
 
     private String suffix = "";
+    private int start;
+    private int end;
     private long startTime = 0;
     public static UHFRManager mUhfrManager;//uhf
     private final Handler handler = new Handler(){
@@ -61,6 +63,22 @@ public class UHFScannerPlugin extends Plugin {
         }
     };
     private final long TIMEOUT_DELAY = 1000; // Adjust timeout delay as needed
+    public static String getSubstring(String input, int start, int end) {
+        // Adjust for 0-based indexing
+        int startIndex = start - 1;
+
+        // Ensure the end index is within the bounds of the string length
+        int endIndex = Math.min(end, input.length());
+
+        // Validate the input indices
+        if (startIndex < 0 || startIndex >= input.length() || startIndex >= endIndex) {
+            throw new IllegalArgumentException("Invalid start or end position.");
+        }
+
+        // Return the substring
+        return input.substring(startIndex, endIndex);
+    }
+
 
     private Runnable runnable_MainActivity = new Runnable() {
         @Override
@@ -76,7 +94,7 @@ public class UHFScannerPlugin extends Plugin {
                     data = Tools.Bytes2HexString(epcdata, epcdata.length);
                     if(data.startsWith(prefix) && data.endsWith(suffix)){
                      int rssi = tfs.RSSI;
-                     tags.add(data);
+                     tags.add(getSubstring(data,start,end));
                      rssis.add(rssi); // Add RSSI value to the rssis array
                     }
                 }
@@ -136,6 +154,8 @@ public class UHFScannerPlugin extends Plugin {
     @PluginMethod
     public void scanInit(PluginCall call) {
         int readPower = call.getInt("readPower",30);
+        start = call.getInt("start",1);
+        end = call.getInt("end",32);
         prefix= call.getString("prefix","");
         suffix= call.getString("suffix","");
         if (mUhfrManager == null) {

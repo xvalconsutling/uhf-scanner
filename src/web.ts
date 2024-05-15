@@ -6,6 +6,8 @@ export interface UHFScannerOptions {
   readPower?: number;
   prefix?: string;
   suffix?: string;
+  start?:number;
+  end?:number;
 }
 export class UHFScannerWeb extends WebPlugin implements UHFScannerPlugin {
   async beginScan(): Promise<void> {
