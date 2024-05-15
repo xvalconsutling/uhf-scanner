@@ -115,5 +115,7 @@ stopScan() => Promise<void>
 | **`readPower`** | <code>number</code> |
 | **`prefix`**    | <code>string</code> |
 | **`suffix`**    | <code>string</code> |
+| **`start`**     | <code>number</code> |
+| **`end`**       | <code>number</code> |
 
 </docgen-api>
